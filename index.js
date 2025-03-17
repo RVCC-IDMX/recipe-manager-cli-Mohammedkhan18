@@ -47,7 +47,7 @@ yargs(hideBin(process.argv))
   // List all recipes
   .command('list', 'List all recipes', () => {
     // This handler is already implemented for you
-    getRecipes(function(recipes) {
+    getRecipes(function (recipes) {
       displayRecipeList(recipes);
     });
   })
@@ -60,7 +60,7 @@ yargs(hideBin(process.argv))
     });
   }, (argv) => {
     // This handler is already implemented for you
-    getRecipeById(argv.id, function(recipe) {
+    getRecipeById(argv.id, function (recipe) {
       if (recipe) {
         displayRecipeDetails(recipe);
       }
@@ -75,7 +75,7 @@ yargs(hideBin(process.argv))
     });
   }, (argv) => {
     // This handler is already implemented for you
-    getRecipeById(argv.id, function(recipe) {
+    getRecipeById(argv.id, function (recipe) {
       if (recipe) {
         displayFormattedRecipe(recipe, formatRecipe);
       }
@@ -87,19 +87,10 @@ yargs(hideBin(process.argv))
     // CHALLENGE 7: Implement recipe creation logic
 
     // 1. Use promptForRecipeInfo to get recipe information
-    promptForRecipeInfo().then(function(recipeInfo) {
-      // This callback will run after the user enters recipe info
-
-      // 2. Create a new recipe using the imported createRecipe function
-      // Hint: createRecipe accepts name, cookingTime, and servings parameters
-
-      // Your code here
-
-      // 3. Save the recipe using the createNewRecipe helper function
-      // Sample code:
-      // createNewRecipe(newRecipe);
-
-      // Your code here
+    promptForRecipeInfo().then(function (recipeInfo) {
+      const newRecipe = createRecipe(recipeInfo.name, recipeInfo.cookingTime, recipeInfo.servings);
+      createNewRecipe(newRecipe);
+      displaySuccess(`Recipe "${newRecipe.name}" created successfully!`);
     });
   })
 
@@ -113,25 +104,16 @@ yargs(hideBin(process.argv))
     // CHALLENGE 8: Implement add ingredient logic
 
     // 1. Get the recipe by ID
-    getRecipeById(argv.id, function(recipe) {
-      // This callback runs when we have the recipe
+    getRecipeById(argv.id, function (recipe) {
 
       if (!recipe) {
-        // If recipe is null, the getRecipeById function already displayed an error
         return;
       }
 
       // 2. Use promptForIngredient to get ingredient information
-      promptForIngredient().then(function(ingredientInfo) {
-        // This callback runs after the user enters ingredient info
+      promptForIngredient().then(function (ingredientInfo) {
+        addIngredient(recipe, ingredientInfo.name, ingredientInfo.amount, ingredientInfo.unit);
 
-        // 3. Add the ingredient to the recipe using the addIngredient function
-        // Hint: addIngredient accepts recipe, name, amount, and unit parameters
-
-        // Your code here
-
-        // 4. Update the recipe in storage
-        // Notice we create a success message first
         const successMessage = `Added ${ingredientInfo.name} to "${recipe.name}"`;
         updateExistingRecipe(recipe, successMessage);
       });
@@ -146,12 +128,12 @@ yargs(hideBin(process.argv))
     });
   }, (argv) => {
     // This handler is already implemented for you
-    getRecipeById(argv.id, function(recipe) {
+    getRecipeById(argv.id, function (recipe) {
       if (!recipe) {
         return;
       }
 
-      promptForStep().then(function(instruction) {
+      promptForStep().then(function (instruction) {
         addStep(recipe, instruction);
 
         const successMessage = `Added step ${recipe.steps.length} to "${recipe.name}"`;
@@ -173,7 +155,7 @@ yargs(hideBin(process.argv))
       });
   }, (argv) => {
     // This handler is already implemented for you
-    getRecipeById(argv.id, function(recipe) {
+    getRecipeById(argv.id, function (recipe) {
       if (!recipe) {
         return;
       }
@@ -192,12 +174,12 @@ yargs(hideBin(process.argv))
       if (stepIndex === null) {
         // Display current steps
         console.log(chalk.cyan('Current steps:'));
-        recipe.steps.forEach(function(step, index) {
+        recipe.steps.forEach(function (step, index) {
           console.log(`${index + 1}. ${step}`);
         });
 
         // Prompt for step index
-        promptForStepIndex(recipe.steps.length - 1).then(function(index) {
+        promptForStepIndex(recipe.steps.length - 1).then(function (index) {
           removeStep(recipe, index);
 
           const successMessage = `Removed step ${index + 1} from "${recipe.name}"`;
@@ -226,12 +208,12 @@ yargs(hideBin(process.argv))
     });
   }, (argv) => {
     // This handler is already implemented for you
-    getRecipeById(argv.id, function(recipe) {
+    getRecipeById(argv.id, function (recipe) {
       if (!recipe) {
         return;
       }
 
-      promptForConfirmation(`Are you sure you want to delete "${recipe.name}"?`).then(function(confirmed) {
+      promptForConfirmation(`Are you sure you want to delete "${recipe.name}"?`).then(function (confirmed) {
         if (!confirmed) {
           displayInfo('Delete cancelled');
           return;
@@ -252,22 +234,22 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     // CHALLENGE 9: Implement quick recipes search
 
-    // Use the getQuickRecipesList helper function, which takes:
-    // 1. maxTime - Maximum cooking time in minutes
-    // 2. callback function that receives the filtered recipes and the time limit
-
-    // Example:
-    // getQuickRecipesList(argv.time, function(quickRecipes, maxTime) {
-    //   // Your code here
-    // });
-
-    // Your code here
+    getQuickRecipesList(argv.time, function (quickRecipes, maxTime) {
+      if (quickRecipes.length > 0) {
+        console.log(chalk.green(`Found ${quickRecipes.length} quick recipes under ${maxTime} minutes:`));
+        quickRecipes.forEach(recipe => {
+          console.log(`${recipe.name} - ${recipe.cookingTime} minutes`);
+        });
+      } else {
+        displayWarning(`No quick recipes found under ${maxTime} minutes`);
+      }
+    });
   })
 
   // Reset recipe data to defaults
   .command('reset-data', 'Reset recipe data to defaults', () => {
     // This handler is already implemented for you
-    promptForConfirmation('Are you sure you want to reset all recipe data to defaults? This cannot be undone.').then(function(confirmed) {
+    promptForConfirmation('Are you sure you want to reset all recipe data to defaults? This cannot be undone.').then(function (confirmed) {
       if (!confirmed) {
         displayInfo('Reset cancelled');
         return;

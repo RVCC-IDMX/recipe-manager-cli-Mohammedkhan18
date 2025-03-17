@@ -29,6 +29,9 @@
         "name": "Spaghetti",
         "amount": 1,
         "unit": "lb"
+      },
+      {
+        "unit": "lb"
       }
     ],
     "steps": [
@@ -37,7 +40,8 @@
       "Add the onion and garlic, cook until softened",
       "Pour in the tomato sauce and simmer for 30 minutes",
       "Meanwhile, cook the spaghetti according to package instructions",
-      "Serve the sauce over the spaghetti"
+      "Serve the sauce over the spaghetti",
+      "Chop the onion and garlic finely"
     ],
     "dateCreated": "3/16/2023"
   },
@@ -122,5 +126,14 @@
       "Serve with maple syrup"
     ],
     "dateCreated": "3/16/2023"
+  },
+  {
+    "id": 1742177162252,
+    "name": "spaghetti",
+    "cookingTime": 120,
+    "servings": 4,
+    "ingredients": [],
+    "steps": [],
+    "dateCreated": "3/16/2025"
   }
 ]
